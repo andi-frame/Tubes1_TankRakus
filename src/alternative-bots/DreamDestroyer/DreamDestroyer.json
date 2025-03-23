@@ -1,0 +1,16 @@
+{
+    "name": "TankRakus",
+    "version": "1.0",
+    "authors": [
+        "anggota 1",
+        "anggota 2",
+        "anggota 3"
+    ],
+    "description": "Deskripsi strategi greedy yang digunakan",
+    "homepage": "",
+    "countryCodes": [
+        "id"
+    ],
+    "platform": ".Net 9.0",
+    "programmingLang": "C# 10.0"
+}
