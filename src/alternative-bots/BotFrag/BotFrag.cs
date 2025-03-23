@@ -3,7 +3,7 @@ using System.Drawing;
 using Robocode.TankRoyale.BotApi;
 using Robocode.TankRoyale.BotApi.Events;
 
-public class DreamDestroyer : Bot
+public class BotFrag : Bot
 {
     int enemies; 
     double moveAmount; 
@@ -18,10 +18,10 @@ public class DreamDestroyer : Bot
 
     static void Main()
     {
-        new DreamDestroyer().Start();
+        new BotFrag().Start();
     }
 
-    DreamDestroyer() : base(BotInfo.FromFile("DreamDestroyer.json")) { }
+    BotFrag() : base(BotInfo.FromFile("BotFrag.json")) { }
 
     public override void Run()
     {
