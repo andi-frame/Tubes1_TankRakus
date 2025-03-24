@@ -71,6 +71,6 @@ Anda dengan menjalani command “dotnet --version”
 digunakan. Untuk Tugas Besar ini, versi yang digunakan adalah “0.30.0” 
 
 ## Author
-Andi Farhan Hidayat - 13523128
-Andri Nurdianto - 13523145
-Muhammad Farrel Wibowo - 13523153
+- Andi Farhan Hidayat - 13523128
+- Andri Nurdianto - 13523145
+- Muhammad Farrel Wibowo - 13523153
