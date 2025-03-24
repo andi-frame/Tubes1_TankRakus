@@ -1,8 +1,8 @@
 {
   "name": "Kamikaze",
   "version": "1.0",
-  "authors": ["Andri N."],
-  "description": "Aku adalah peluru, peluru adalah aku",
+  "authors": ["Andi Farhan Hidayat", "Andri Nurdianto", "M. Farrel Wibowo"],
+  "description": "Greedy Damage (Bullet dan Ramming)",
   "homepage": "",
   "countryCodes": ["id"],
   "platform": ".Net 6.0",
