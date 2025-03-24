@@ -12,7 +12,7 @@ public class TankRakus : Bot
 
   // Targeting variables
   private bool isLocking, isEnemyScanned;
-  private double lastEnemyX, lastEnemyY, enemySpeed, enemyDirection;
+  private double lastEnemyX, lastEnemyY, enemyDirection;
   private int targetId = -1;
   private int lastEnemySeenTurn = -1;
   private int targetLostThreshold = 50;
@@ -25,13 +25,13 @@ public class TankRakus : Bot
 
   private void SetColors()
   {
-    BodyColor = Color.FromArgb(0x1E, 0x1E, 0x2E);
-    TurretColor = Color.FromArgb(0xFF, 0x45, 0x00);
+    BodyColor = Color.FromArgb(0x00, 0x00, 0x00);
+    TurretColor = Color.FromArgb(0xFF, 0x00, 0x00);
     RadarColor = Color.FromArgb(0x00, 0xFF, 0xFF);
-    BulletColor = Color.FromArgb(0xFF, 0xD7, 0x00);
-    ScanColor = Color.FromArgb(0xAD, 0xFF, 0x2F);
-    TracksColor = Color.FromArgb(0x80, 0x80, 0x80);
-    GunColor = Color.FromArgb(0xDC, 0x14, 0x3C);
+    BulletColor = Color.FromArgb(0xFF, 0xFF, 0x00);
+    ScanColor = Color.FromArgb(0x00, 0xFF, 0x00);
+    TracksColor = Color.FromArgb(0xFF, 0x80, 0x00);
+    GunColor = Color.FromArgb(0xFF, 0x00, 0xFF);
   }
 
   public override void Run()
@@ -71,7 +71,7 @@ public class TankRakus : Bot
 
         SetTurnLeft(BearingTo(lastEnemyX, lastEnemyY));
         SetTurnGunLeft(GunBearingTo(lastEnemyX, lastEnemyY));
-        Fire(2)
+        Fire(2);
 
         isEnemyScanned = false;
       }
