@@ -1,0 +1,10 @@
+{
+  "name": "Kamikaze",
+  "version": "1.0",
+  "authors": ["Andri N."],
+  "description": "Aku adalah peluru, peluru adalah aku",
+  "homepage": "",
+  "countryCodes": ["id"],
+  "platform": ".Net 6.0",
+  "programmingLang": "C# 10.0"
+}
