@@ -56,7 +56,7 @@ public class Bothan : Bot
         AvoidWall();
       }
 
-      if (isLocking && isEnemyScanned)
+      if (isEnemyScanned)
       {
         Console.WriteLine("Locking: " + targetId);
         var radarTurn = RadarBearingTo(lastEnemyX, lastEnemyY);
@@ -128,24 +128,30 @@ public class Bothan : Bot
   // On Scanned Function
   public override void OnScannedBot(ScannedBotEvent e)
   {
-    if (!isLocking || e.ScannedBotId == targetId)
-    {
-      isLocking = true;
-      isEnemyScanned = true;
-      targetId = e.ScannedBotId;
+    isEnemyScanned = true;
+    targetId = e.ScannedBotId;
+    lastEnemyX = e.X;
+    lastEnemyY = e.Y;
+    enemySpeed = e.Speed;
 
-      lastEnemyX = e.X;
-      lastEnemyY = e.Y;
+    enemyDirection = e.Direction;
 
-      enemyDirection = e.Direction;
-    }
-    else
-    {
-      targetId = e.ScannedBotId;
-      lastEnemyX = e.X + 10;
-      lastEnemyY = e.Y + 10;
-      enemyDirection = BearingTo(e.X, e.Y);
-    }
+    // if (!isLocking || e.ScannedBotId == targetId)
+    // {
+    //   isLocking = true;
+    //   isEnemyScanned = true;
+    //   targetId = e.ScannedBotId;
+
+    //   lastEnemyX = e.X;
+    //   lastEnemyY = e.Y;
+    //   enemySpeed = e.Speed;
+
+    //   enemyDirection = e.Direction;
+    // }
+    // else
+    // {
+
+    // }
   }
 
   // Predict Fire Bearing and Timing
