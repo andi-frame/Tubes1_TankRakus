@@ -14,12 +14,11 @@ public class Bothan : Bot
   private bool isLocking, isEnemyScanned;
   private double lastEnemyX, lastEnemyY, enemySpeed, enemyDirection;
   private int targetId = -1;
-  private double lastEnemyEnergy;
 
 
   // Movement variables
   private int moveDirection = 1;
-  private int wallMargin = 800;
+  private int wallMargin = 100;
   private int orbitDirection = 1;
   private int orbitSwitchCounter = 0;
 
@@ -49,16 +48,23 @@ public class Bothan : Bot
     isEnemyScanned = false;
 
     // Initial movement
-    TargetSpeed = 8 * moveDirection;
+    TargetSpeed = 5 * moveDirection;
 
     // MAIN
     while (IsRunning)
     {
+      if (IsTooCloseToWall())
+      {
+        AvoidWall();
+      }
+
       if (isLocking && isEnemyScanned)
       {
         Console.WriteLine("Locking: " + targetId);
         var radarTurn = RadarBearingTo(lastEnemyX, lastEnemyY);
         SetTurnRadarLeft(radarTurn);
+
+        SetTurnLeft(BearingTo(lastEnemyX, lastEnemyY));
 
         FirePredict();
         isEnemyScanned = false;
@@ -69,7 +75,7 @@ public class Bothan : Bot
         SetTurnRadarRight(20);
       }
 
-      ExecuteMovement();
+      // ExecuteMovement();
       Go();
     }
   }
@@ -77,36 +83,6 @@ public class Bothan : Bot
 
   // ==== To Maximize Energy for Shooting Only ====
   // Avoid unnecessary action that can reduce energy usage for shooting
-
-  // Movement function
-  private void ExecuteMovement()
-  {
-    if (IsTooCloseToWall())
-    {
-      AvoidWall();
-      return;
-    }
-
-    if (isLocking)
-    {
-      double turnAngle = BearingTo(lastEnemyX, lastEnemyY);
-      if (turnAngle >= 0 & turnAngle <= 180)
-      {
-        SetTurnRight(turnAngle);
-      }
-      else
-      {
-        SetTurnLeft(turnAngle);
-      }
-    }
-    else
-    {
-      if (Random(10) == 1)
-      {
-        SetTurnRight(Random(90) - 45);
-      }
-    }
-  }
 
   private bool IsTooCloseToWall()
   {
@@ -130,15 +106,22 @@ public class Bothan : Bot
     SetTurnLeft(angleToCenter);
   }
 
-  public override void OnHitWall(HitWallEvent e)
-  {
-    // TargetSpeed = -0;
-  }
 
-  public override void OnHitByBullet(HitByBulletEvent e)
+  public override void OnHitBot(HitBotEvent e)
   {
-    // TargetSpeed = -TargetSpeed;
-    // SetTurnRight(Direction + 180);
+    // Get enemy potition
+    double hitBotX = e.X;
+    double hitBotY = e.Y;
+    double bearingToEnemyBot = BearingTo(hitBotX, hitBotY);
+
+    if (e.IsRammed)
+    {
+      SetTurnLeft(NormalizeRelativeAngle(bearingToEnemyBot + 90));
+    }
+    else
+    {
+      SetTurnLeft(NormalizeRelativeAngle(bearingToEnemyBot + 180));
+    }
   }
 
 
@@ -147,7 +130,6 @@ public class Bothan : Bot
   // On Scanned Function
   public override void OnScannedBot(ScannedBotEvent e)
   {
-    Console.WriteLine("On Scanned Bot");
     if (!isLocking || e.ScannedBotId == targetId)
     {
       isLocking = true;
@@ -157,7 +139,6 @@ public class Bothan : Bot
       lastEnemyX = e.X;
       lastEnemyY = e.Y;
 
-      lastEnemyEnergy = e.Energy;
       enemyDirection = e.Direction;
     }
     else
@@ -166,7 +147,6 @@ public class Bothan : Bot
       lastEnemyX = e.X + 10;
       lastEnemyY = e.Y + 10;
       enemyDirection = BearingTo(e.X, e.Y);
-      lastEnemyEnergy = e.Energy;
     }
   }
 
@@ -174,30 +154,25 @@ public class Bothan : Bot
   private void FirePredict()
   {
     double distance = DistanceTo(lastEnemyX, lastEnemyY);
-    if (distance <= 0.1)
+    if (distance <= 1)
     {
-      SetFire(10);
+      SetFire(3);
       return;
     }
 
-    double firePower = Math.Min(3, Math.Max(1, 400 / distance));
+    double firePower = 3;
     double bulletSpeed = CalcBulletSpeed(firePower);
 
     double timeToHit = distance / bulletSpeed;
     double directionRad = enemyDirection * Math.PI / 180;
-    // double correction = Math.Atan(Math.Sqrt(4000 / (distance * distance)));
-    // double correctionDegree = correction * 180 / Math.PI;
 
     double predictedX = lastEnemyX + enemySpeed * Math.Cos(directionRad) * timeToHit;
     double predictedY = lastEnemyY + enemySpeed * Math.Sin(directionRad) * timeToHit;
 
     double gunTurn = GunBearingTo(predictedX, predictedY);
     SetTurnGunLeft(gunTurn);
-    // Console.WriteLine(correctionDegree);
-    Console.WriteLine(GunDirection + " " + RadarDirection);
 
-
-    SetFire(firePower);
+    Fire(firePower);
   }
 
   public override void OnBotDeath(BotDeathEvent e)
@@ -212,11 +187,5 @@ public class Bothan : Bot
   {
     isLocking = false;
     targetId = -1;
-  }
-
-  // Helper
-  private int Random(int max)
-  {
-    return new Random().Next(max);
   }
 }
