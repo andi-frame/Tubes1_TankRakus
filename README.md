@@ -24,20 +24,21 @@ engine hasil modifikasi asisten.
    java -jar robocode-tankroyale-gui-0.30.0.jar
    ```
 2. Setup konfigurasi booter
-   a. Klik tombol “Config”
-   b. Klik tombol “Bot Root Directories”
-   c. Masukkan directory yang berisi folder-folder bot kalian 
-3. Jalankan sebuah battle
-   a. Klik tombol “Battle”
-   b. Klik tombol “Start Battle”
-   c. Akan muncul panel konfigurasi permainan
+   
+   - Klik tombol “Config”
+   - Klik tombol “Bot Root Directories”
+   - Masukkan directory yang berisi folder-folder bot kalian 
+4. Jalankan sebuah battle
+   - Klik tombol “Battle”
+   - Klik tombol “Start Battle”
+   - Akan muncul panel konfigurasi permainan
       1. Bot-bot di dalam directory yang telah disetup pada proses konfigurasi akan otomatis muncul pada kotak kiri-atas
-   d. Boot bot yang ingin Anda mainkan
+   - Boot bot yang ingin Anda mainkan
       1. Select bot yang ingin dimainkan pada kotak kiri-atas
       2. Klik tombol “Boot →”
       3. Bot yang telah diselect akan muncul pada kotak kanan-atas 
       4. Bot yang berhasil di-boot akan muncul pada kotak kiri-bawah
-   e. Tambahkan bot ke dalam permainan
+   - Tambahkan bot ke dalam permainan
       1. Select bot yang ingin ditambahkan ke dalam permaianan pada kotak kiri-bawah
       2. Klik tombol “Add →”
       3. Apabila Anda ingin menambahkan semua bot, klik tombol “Add All →”
