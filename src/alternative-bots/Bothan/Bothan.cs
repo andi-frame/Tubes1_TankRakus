@@ -11,13 +11,10 @@ public class Bothan : Bot
   }
 
   // Targeting variables
-  private bool isLocking, isEnemyScanned;
+  private bool isEnemyScanned;
   private double lastEnemyX, lastEnemyY, enemySpeed, enemyDirection;
-  private int targetId = -1;
-
 
   // Movement variables
-  private int moveDirection = 1;
   private int wallMargin = 100;
 
   Bothan() : base(BotInfo.FromFile("Bothan.json")) { }
@@ -42,11 +39,10 @@ public class Bothan : Bot
     AdjustGunForBodyTurn = true;
 
     // Initial boolean value
-    isLocking = false;
     isEnemyScanned = false;
 
     // Initial movement
-    TargetSpeed = 5 * moveDirection;
+    TargetSpeed = 5;
 
     // MAIN
     while (IsRunning)
@@ -58,7 +54,6 @@ public class Bothan : Bot
 
       if (isEnemyScanned)
       {
-        Console.WriteLine("Locking: " + targetId);
         var radarTurn = RadarBearingTo(lastEnemyX, lastEnemyY);
         SetTurnRadarLeft(radarTurn);
 
@@ -129,29 +124,11 @@ public class Bothan : Bot
   public override void OnScannedBot(ScannedBotEvent e)
   {
     isEnemyScanned = true;
-    targetId = e.ScannedBotId;
     lastEnemyX = e.X;
     lastEnemyY = e.Y;
     enemySpeed = e.Speed;
 
     enemyDirection = e.Direction;
-
-    // if (!isLocking || e.ScannedBotId == targetId)
-    // {
-    //   isLocking = true;
-    //   isEnemyScanned = true;
-    //   targetId = e.ScannedBotId;
-
-    //   lastEnemyX = e.X;
-    //   lastEnemyY = e.Y;
-    //   enemySpeed = e.Speed;
-
-    //   enemyDirection = e.Direction;
-    // }
-    // else
-    // {
-
-    // }
   }
 
   // Predict Fire Bearing and Timing
@@ -177,19 +154,5 @@ public class Bothan : Bot
     SetTurnGunLeft(gunTurn);
 
     Fire(firePower);
-  }
-
-  public override void OnBotDeath(BotDeathEvent e)
-  {
-    if (e.VictimId == targetId)
-    {
-      ResetTargeting();
-    }
-  }
-
-  private void ResetTargeting()
-  {
-    isLocking = false;
-    targetId = -1;
   }
 }
