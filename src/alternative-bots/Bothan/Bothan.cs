@@ -19,8 +19,6 @@ public class Bothan : Bot
   // Movement variables
   private int moveDirection = 1;
   private int wallMargin = 100;
-  private int orbitDirection = 1;
-  private int orbitSwitchCounter = 0;
 
   Bothan() : base(BotInfo.FromFile("Bothan.json")) { }
 
@@ -154,9 +152,9 @@ public class Bothan : Bot
   private void FirePredict()
   {
     double distance = DistanceTo(lastEnemyX, lastEnemyY);
-    if (distance <= 1)
+    Console.WriteLine("Distance: " + distance);
+    if (distance > 700)
     {
-      SetFire(3);
       return;
     }
 
