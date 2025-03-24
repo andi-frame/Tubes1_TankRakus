@@ -156,3 +156,5 @@ public class TankRakus : Bot
     Fire(firePower);
   }
 }
+
+//test
