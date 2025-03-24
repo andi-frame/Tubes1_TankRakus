@@ -7,7 +7,6 @@ public class BotFrag : Bot
 {
     int enemies; 
     double moveAmount; 
-    double kesehatan;
     int turnDirection = 1;
     bool lowEnergyMode = false;
 
@@ -38,7 +37,7 @@ public class BotFrag : Bot
         Forward(moveAmount);
 
         enemies = EnemyCount;
-        kesehatan = Energy;
+ 
         TurnGunRight(90);
 
         while (IsRunning)
@@ -103,9 +102,13 @@ public class BotFrag : Bot
                 double firePower = Math.Min(power, Math.Max(0.1, Energy - 0.1));
                 Fire(firePower);
 
-                // Bergerak setelah menembak
-                TurnRight(30);
-                Forward(80);
+                // // Bergerak setelah menembak
+                // TurnRight(30);
+                // Forward(80);
+            }
+            else
+            {
+                return;
             }
         }
 
@@ -126,23 +129,15 @@ public class BotFrag : Bot
         TurnGunLeft(bearing);
         turnDirection *= -1;
 
-        if (IsNearWall())
+        if (bearing > -90 && bearing < 90)
         {
             Back(100);
-            TurnRight(60);
+            TurnLeft(90);
         }
         else
         {
-            if (bearing > -90 && bearing < 90)
-            {
-                Back(100);
-                TurnLeft(90);
-            }
-            else
-            {
-                Forward(100);
-                TurnLeft(90);
-            }
+            Forward(100);
+            TurnLeft(90);
         }
         Rescan();
     }
@@ -152,41 +147,38 @@ public class BotFrag : Bot
         if (Energy < 20)
         {
             lowEnergyMode = true;
-            if (IsNearWall())
+            if(turnDirection == 1)
             {
                 TurnRight(90);
-                Back(100);
+                Back(400);
             }
             else
             {
-                TurnRight(45);
-                Back(150);
+                TurnLeft(90);
+                Back(400);
             }
         }
         else
         {
-            if (IsNearWall())
+            if(turnDirection == 1)
             {
-                TurnLeft(90);
-                Back(100);
+                TurnRight(90);
+                Back(200);
             }
             else
             {
-                TurnRight(90);
-                Back(100);
+                TurnLeft(90);
+                Back(200);
             }
         }
 
         TurnRight(30);
         Forward(100);
+        TurnLeft(30);
 
         var bearingFromGun = GunBearingTo(e.Bullet.X, e.Bullet.Y);
         TurnGunLeft(bearingFromGun);
+        Rescan();
         turnDirection *= -1;
-    }
-
-    bool IsNearWall()
-    {
-        return X < 80 || X > ArenaWidth - 80 || Y < 80 || Y > ArenaHeight - 80;
     }
 }

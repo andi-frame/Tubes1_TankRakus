@@ -1,12 +1,12 @@
 {
-    "name": "TankRakus",
+    "name": "BotFrag",
     "version": "1.0",
     "authors": [
-        "anggota 1",
-        "anggota 2",
-        "anggota 3"
+        "Andi Farhan Hidayat",
+        "Andri Nurdianto",
+        "M. Farrel Wibowo"
     ],
-    "description": "Deskripsi strategi greedy yang digunakan",
+    "description": "Greedy Survival Bot",
     "homepage": "",
     "countryCodes": [
         "id"
