@@ -1,12 +1,16 @@
-
 {
   "name": "TankRakus-Bothan",
   "version": "1.0",
-  "authors": [ "Andi Farhan Hidayat", "Andri Nurdianto", "M. Farrel Wibowo"],
-  "description": "Greedy Damage Peluru",
+  "authors": [
+    "Andi Farhan Hidayat",
+    "Andri Nurdianto",
+    "M. Farrel Wibowo"
+  ],
+  "description": "Greedy Bunuh Bot Lain",
   "homepage": "",
-  "countryCodes": [ "id" ],
+  "countryCodes": [
+    "id"
+  ],
   "platform": ".net 6.0",
   "programmingLang": "C# 10.0"
 }
-

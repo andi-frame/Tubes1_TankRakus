@@ -11,12 +11,8 @@ public class TankRakus : Bot
   }
 
   // Targeting variables
-  private bool isLocking, isEnemyScanned;
-  private double lastEnemyX, lastEnemyY, enemyDirection;
-  private int targetId = -1;
-  private int lastEnemySeenTurn = -1;
-  private int targetLostThreshold = 50;
-
+  private bool isEnemyScanned;
+  private double lastEnemyX, lastEnemyY, enemySpeed, enemyDirection;
 
   // Movement variables
   private int wallMargin = 100;
@@ -25,13 +21,13 @@ public class TankRakus : Bot
 
   private void SetColors()
   {
-    BodyColor = Color.FromArgb(0x00, 0x00, 0x00);
-    TurretColor = Color.FromArgb(0xFF, 0x00, 0x00);
+    BodyColor = Color.FromArgb(0x1E, 0x1E, 0x2E);
+    TurretColor = Color.FromArgb(0xFF, 0x45, 0x00);
     RadarColor = Color.FromArgb(0x00, 0xFF, 0xFF);
-    BulletColor = Color.FromArgb(0xFF, 0xFF, 0x00);
-    ScanColor = Color.FromArgb(0x00, 0xFF, 0x00);
-    TracksColor = Color.FromArgb(0xFF, 0x80, 0x00);
-    GunColor = Color.FromArgb(0xFF, 0x00, 0xFF);
+    BulletColor = Color.FromArgb(0xFF, 0xD7, 0x00);
+    ScanColor = Color.FromArgb(0xAD, 0xFF, 0x2F);
+    TracksColor = Color.FromArgb(0x80, 0x80, 0x80);
+    GunColor = Color.FromArgb(0xDC, 0x14, 0x3C);
   }
 
   public override void Run()
@@ -43,7 +39,6 @@ public class TankRakus : Bot
     AdjustGunForBodyTurn = true;
 
     // Initial boolean value
-    isLocking = false;
     isEnemyScanned = false;
 
     // Initial movement
@@ -57,22 +52,14 @@ public class TankRakus : Bot
         AvoidWall();
       }
 
-      if (isLocking && (TurnNumber - lastEnemySeenTurn > targetLostThreshold))
+      if (isEnemyScanned)
       {
-        Console.WriteLine("Target lost - assuming dead or out of range");
-        ResetTargeting();
-      }
-
-      if (isLocking && isEnemyScanned)
-      {
-        Console.WriteLine("Locking: " + targetId);
         var radarTurn = RadarBearingTo(lastEnemyX, lastEnemyY);
         SetTurnRadarLeft(radarTurn);
 
         SetTurnLeft(BearingTo(lastEnemyX, lastEnemyY));
-        SetTurnGunLeft(GunBearingTo(lastEnemyX, lastEnemyY));
-        Fire(2);
 
+        FirePredict();
         isEnemyScanned = false;
       }
       else
@@ -81,9 +68,14 @@ public class TankRakus : Bot
         SetTurnRadarRight(20);
       }
 
+      // ExecuteMovement();
       Go();
     }
   }
+
+
+  // ==== To Maximize Energy for Shooting Only ====
+  // Avoid unnecessary action that can reduce energy usage for shooting
 
   private bool IsTooCloseToWall()
   {
@@ -125,36 +117,42 @@ public class TankRakus : Bot
     }
   }
 
+
+  // ==== To Maximize Bullet Damage ====
+  // Predict enemy movement, higher bullet hit chance
   // On Scanned Function
   public override void OnScannedBot(ScannedBotEvent e)
   {
-    if (!isLocking || e.ScannedBotId == targetId)
-    {
-      isLocking = true;
-      isEnemyScanned = true;
-      targetId = e.ScannedBotId;
+    isEnemyScanned = true;
+    lastEnemyX = e.X;
+    lastEnemyY = e.Y;
+    enemySpeed = e.Speed;
 
-      lastEnemySeenTurn = TurnNumber;
-      lastEnemyX = e.X;
-      lastEnemyY = e.Y;
-
-      enemyDirection = e.Direction;
-    }
+    enemyDirection = e.Direction;
   }
 
-  // Refresh Targeting
-  public override void OnBotDeath(BotDeathEvent e)
+  // Predict Fire Bearing and Timing
+  private void FirePredict()
   {
-    if (e.VictimId == targetId)
+    double distance = DistanceTo(lastEnemyX, lastEnemyY);
+    Console.WriteLine("Distance: " + distance);
+    if (distance > 700)
     {
-      ResetTargeting();
+      return;
     }
-  }
 
-  private void ResetTargeting()
-  {
-    isEnemyScanned = false;
-    isLocking = false;
-    targetId = -1;
+    double firePower = 3;
+    double bulletSpeed = CalcBulletSpeed(firePower);
+
+    double timeToHit = distance / bulletSpeed;
+    double directionRad = enemyDirection * Math.PI / 180;
+
+    double predictedX = lastEnemyX + enemySpeed * Math.Cos(directionRad) * timeToHit;
+    double predictedY = lastEnemyY + enemySpeed * Math.Sin(directionRad) * timeToHit;
+
+    double gunTurn = GunBearingTo(predictedX, predictedY);
+    SetTurnGunLeft(gunTurn);
+
+    Fire(firePower);
   }
 }
