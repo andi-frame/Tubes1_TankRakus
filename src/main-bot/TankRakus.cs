@@ -14,10 +14,11 @@ public class TankRakus : Bot
   private bool isLocking, isEnemyScanned;
   private double lastEnemyX, lastEnemyY, enemySpeed, enemyDirection;
   private int targetId = -1;
+  private int lastEnemySeenTurn = -1;
+  private int targetLostThreshold = 50;
 
 
   // Movement variables
-  private int moveDirection = 1;
   private int wallMargin = 100;
 
   TankRakus() : base(BotInfo.FromFile("TankRakus.json")) { }
@@ -46,7 +47,7 @@ public class TankRakus : Bot
     isEnemyScanned = false;
 
     // Initial movement
-    TargetSpeed = 5 * moveDirection;
+    TargetSpeed = 5;
 
     // MAIN
     while (IsRunning)
@@ -56,6 +57,12 @@ public class TankRakus : Bot
         AvoidWall();
       }
 
+      if (isLocking && (TurnNumber - lastEnemySeenTurn > targetLostThreshold))
+      {
+        Console.WriteLine("Target lost - assuming dead or out of range");
+        ResetTargeting();
+      }
+
       if (isLocking && isEnemyScanned)
       {
         Console.WriteLine("Locking: " + targetId);
@@ -63,8 +70,9 @@ public class TankRakus : Bot
         SetTurnRadarLeft(radarTurn);
 
         SetTurnLeft(BearingTo(lastEnemyX, lastEnemyY));
+        SetTurnGunLeft(GunBearingTo(lastEnemyX, lastEnemyY));
+        Fire(2)
 
-        FirePredict();
         isEnemyScanned = false;
       }
       else
@@ -73,14 +81,9 @@ public class TankRakus : Bot
         SetTurnRadarRight(20);
       }
 
-      // ExecuteMovement();
       Go();
     }
   }
-
-
-  // ==== To Maximize Energy for Shooting Only ====
-  // Avoid unnecessary action that can reduce energy usage for shooting
 
   private bool IsTooCloseToWall()
   {
@@ -122,9 +125,6 @@ public class TankRakus : Bot
     }
   }
 
-
-  // ==== To Maximize Bullet Damage ====
-  // Predict enemy movement, higher bullet hit chance
   // On Scanned Function
   public override void OnScannedBot(ScannedBotEvent e)
   {
@@ -134,45 +134,15 @@ public class TankRakus : Bot
       isEnemyScanned = true;
       targetId = e.ScannedBotId;
 
+      lastEnemySeenTurn = TurnNumber;
       lastEnemyX = e.X;
       lastEnemyY = e.Y;
 
       enemyDirection = e.Direction;
     }
-    else
-    {
-      targetId = e.ScannedBotId;
-      lastEnemyX = e.X + 10;
-      lastEnemyY = e.Y + 10;
-      enemyDirection = BearingTo(e.X, e.Y);
-    }
   }
 
-  // Predict Fire Bearing and Timing
-  private void FirePredict()
-  {
-    double distance = DistanceTo(lastEnemyX, lastEnemyY);
-    Console.WriteLine("Distance: " + distance);
-    if (distance > 700)
-    {
-      return;
-    }
-
-    double firePower = 3;
-    double bulletSpeed = CalcBulletSpeed(firePower);
-
-    double timeToHit = distance / bulletSpeed;
-    double directionRad = enemyDirection * Math.PI / 180;
-
-    double predictedX = lastEnemyX + enemySpeed * Math.Cos(directionRad) * timeToHit;
-    double predictedY = lastEnemyY + enemySpeed * Math.Sin(directionRad) * timeToHit;
-
-    double gunTurn = GunBearingTo(predictedX, predictedY);
-    SetTurnGunLeft(gunTurn);
-
-    Fire(firePower);
-  }
-
+  // Refresh Targeting
   public override void OnBotDeath(BotDeathEvent e)
   {
     if (e.VictimId == targetId)
@@ -183,6 +153,7 @@ public class TankRakus : Bot
 
   private void ResetTargeting()
   {
+    isEnemyScanned = false;
     isLocking = false;
     targetId = -1;
   }
